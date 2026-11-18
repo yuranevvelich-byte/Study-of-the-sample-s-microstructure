@@ -1,0 +1,98 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
+from matplotlib.patches import Patch
+
+start = np.random.randint(0, 256, size=(20, 20))
+
+pores = 0
+sic = 0
+si = 0
+
+result = np.zeros((20, 20), dtype=int)
+
+# Записую типи речовин і класифікацію за допомогою операторів
+for i in range(20):
+    for j in range(20):
+
+        if start[i, j] <= 29:
+            result[i, j] = 0
+            pores += 1
+
+        elif start[i, j] <= 139:
+            result[i, j] = 1
+            sic += 1
+
+        else:
+            result[i, j] = 2
+            si += 1
+
+# Розраховую площу матриці і вміст кожної речовини
+total = 20 * 20
+
+pores_per = pores / total * 100
+sic_per = sic / total * 100
+si_per = si / total * 100
+
+# Знаходження масових часток
+part_sic = 3.21
+part_si = 2.33
+
+mass_sic = sic_per / 100 * part_sic
+mass_si = si_per / 100 * part_si
+
+total_mass = mass_sic + mass_si
+
+sic_mass = mass_sic / total_mass * 100
+si_mass = mass_si / total_mass * 100
+
+# Перевіряємо результат
+if pores_per <= 5 and si_mass <= 15:
+    status = "Зразок відповідає вимогам"
+else:
+    status = "Зразок не відповідає вимогам"
+
+# Виведення результатів
+print("Результати аналізу мікроструктури")
+print("--------------------------------")
+
+print(f"Пористість: {pores_per:.2f}%")
+print(f"Площинна частка SiC: {sic_per:.2f}%")
+print(f"Площинна частка Si: {si_per:.2f}%")
+
+print("\nМасові частки:")
+print(f"SiC: {sic_mass:.2f}%")
+print(f"Si: {si_mass:.2f}%")
+
+print("\nПеревірка вимог:")
+
+if pores_per <= 5:
+    print("Пористість: відповідає нормі")
+else:
+    print("Пористість: не відповідає нормі")
+
+if si_mass <= 15:
+    print("Вміст Si: відповідає нормі")
+else:
+    print("Вміст Si: не відповідає нормі")
+
+print("\n" + status)
+
+# Побудова зображення мікроструктури
+colors = ListedColormap(["black", "green", "yellow"])
+
+plt.figure(figsize=(7, 6))
+plt.imshow(result, cmap=colors, vmin=0, vmax=2)
+
+plt.title("Мікроструктура матеріалу")
+plt.xlabel("Стовпці")
+plt.ylabel("Рядки")
+
+legend = [
+    Patch(color="black", label="Пори"),
+    Patch(color="green", label="SiC"),
+    Patch(color="yellow", label="Si")
+]
+
+plt.legend(handles=legend)
+plt.show()
